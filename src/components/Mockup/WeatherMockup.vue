@@ -14,7 +14,6 @@ const weatherList = ref([
   { id: 'city_05', name: '런던', temp: 21, status: '구름' },
   { id: 'city_06', name: '바르셀로나', temp: 34, status: '맑음' },
 ])
-
 // 경기 정보 배열
 const matchList = ref([
   {
