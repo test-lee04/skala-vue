@@ -116,7 +116,6 @@ watchEffect(() => {
 
 <template>
   <section class="mockup">
-    <h1>🌥️ 과제 2: 날씨 (컴포지션)</h1>
     <div class="panel search-panel">
       <h3>🔍 도시 검색</h3>
       <input v-model="searchQuery" type="text" placeholder="검색할 도시 이름 입력" />
@@ -137,13 +136,9 @@ watchEffect(() => {
           <div class="weather-info">
             <p class="city-name">{{ item.name }} ({{ item.status }})</p>
             <p>현재 기온: {{ item.temp }}℃</p>
-            <span v-if="item.temp >= 33" class="weather-label hot"
-              >🥵 매우 더움 (하이드레이션 필요)</span
-            >
+            <span v-if="item.temp >= 33" class="weather-label hot">🥵 매우 더움 (하이드레이션 필요)</span>
             <span v-else-if="item.temp >= 25" class="weather-label hot"> 🔥 더움 (25도 이상) </span>
-            <span v-else-if="item.temp >= 11" class="weather-label cool"
-              >❄️ 선선함 (25도 미만)</span
-            >
+            <span v-else-if="item.temp >= 11" class="weather-label cool">❄️ 선선함 (25도 미만)</span>
             <span v-else class="weather-label cool">❄️매우 추움(겉옷 필요)</span>
           </div>
           <button type="button" @click.stop="showDetail(item.name, item.status)">상세보기</button>
@@ -183,7 +178,10 @@ watchEffect(() => {
 
 <style scoped>
 .mockup {
-  width: min(1100px, calc(100vw - 64px));
+  width: 100%;
+  max-width: 1100px;
+  min-width: 0;
+  margin: 0 auto;
   padding: 32px 36px 28px;
   color: #222;
 }
@@ -387,7 +385,7 @@ watchEffect(() => {
   }
 
   .mockup {
-    width: calc(100vw - 32px);
+    width: 100%;
     padding: 24px 18px 20px;
   }
 }
