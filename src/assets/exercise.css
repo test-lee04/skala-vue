@@ -38,8 +38,8 @@
   border-top: 2px solid #e9ecef;
   margin-bottom: 24px;
 }
-/* 세션 대제목 (h1) 스타일링 */
-h1 {
+/* 과제 영역 대제목 스타일링 */
+.app-container > h1 {
   font-size: 1.8rem;
   font-weight: 700;
   color: #1a252f;

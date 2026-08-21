@@ -51,7 +51,7 @@ const weatherAlert = computed(() => alertStore.getAlert(props.cityItem))
       >
         {{ favoriteStore.isFavorite(cityItem.id) ? '⭐' : '☆' }}
       </button>
-      <button class="btn-detail" @click.stop="emit('click-detail')">상세보기</button>
+      <button class="btn-detail" @click.stop="emit('click-detail', cityItem.id)">상세보기</button>
     </div>
   </div>
 </template>

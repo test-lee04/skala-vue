@@ -6,6 +6,7 @@ import BaseDashboardCard from '../components/Mockup/BaseDashboardCard.vue'
 import SearchBar from '../components/Mockup/SearchBar.vue'
 import WeatherCard from '../components/Mockup/WeatherCard.vue'
 import { useFavoriteCityStore } from '../stores/favoriteCityStore'
+import { matchList, weatherList } from '../data/footballData'
 
 const router = useRouter()
 const route = useRoute()
@@ -16,24 +17,19 @@ const searchQuery = ref('')
 // 선택된 도시
 const selectedCityInfo = ref('카드를 클릭하거나 검색해 보세요.')
 // 지역별 날시 데이터 배열
-const weatherList = ref([
-  { id: 'city_01', name: '서울', temp: 28, status: '맑음' },
-  { id: 'city_02', name: '수원', temp: 24, status: '비' },
-  { id: 'city_03', name: '부산', temp: 26, status: '구름' },
-  { id: 'city_04', name: '맨체스터', temp: 10, status: '비' },
-  { id: 'city_05', name: '런던', temp: 21, status: '구름' },
-  { id: 'city_06', name: '바르셀로나', temp: 34, status: '맑음' },
-])
+const cities = ref(weatherList)
 
 const filteredWeatherList = computed(() => {
   const query = searchQuery.value.trim().toLocaleLowerCase()
-  let cities = weatherList.value
+  let filteredCities = cities.value
 
   if (query) {
-    cities = cities.filter((weather) => weather.name.toLocaleLowerCase().includes(query))
+    filteredCities = filteredCities.filter((weather) =>
+      weather.name.toLocaleLowerCase().includes(query),
+    )
   }
 
-  return [...cities].sort((first, second) => {
+  return [...filteredCities].sort((first, second) => {
     return Number(favoriteStore.isFavorite(second.id)) - Number(favoriteStore.isFavorite(first.id))
   })
 })
@@ -70,6 +66,26 @@ const handleDetailJump = (id) => {
 
 <template>
   <div class="mockup">
+    <header class="page-heading">
+      <span>FOOTBALL WEATHER DASHBOARD</span>
+      <h1>오늘, 어느 경기장이 좋을까요?</h1>
+      <p>도시별 날씨를 비교하고 상세 기상 정보를 확인하세요.</p>
+    </header>
+
+    <div class="summary-grid">
+      <RouterLink to="/today-match" class="summary-card"
+        ><strong>{{ matchList.length }}</strong
+        ><span>오늘의 경기</span></RouterLink
+      >
+      <RouterLink to="/live-weather" class="summary-card"
+        ><strong>{{ weatherList.length }}</strong
+        ><span>경기장 날씨</span></RouterLink
+      >
+      <RouterLink to="/favorites" class="summary-card"
+        ><strong>★</strong><span>관심 경기</span></RouterLink
+      >
+    </div>
+
     <BaseDashboardCard>
       <SearchBar
         :current-query="searchQuery"
@@ -101,8 +117,60 @@ const handleDetailJump = (id) => {
 
 <style scoped>
 .mockup {
-  width: 600px;
+  width: 100%;
+  max-width: 960px;
   margin: 0 auto;
+}
+
+.page-heading {
+  margin-bottom: 24px;
+}
+
+.page-heading span {
+  color: #168653;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.page-heading h1 {
+  margin: 5px 0;
+  color: inherit;
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 800;
+}
+
+.page-heading p {
+  color: #6c7e76;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.summary-card {
+  display: grid;
+  gap: 3px;
+  padding: 16px;
+  color: #17352a;
+  background: #fff;
+  border: 1px solid #dfe8e3;
+  border-radius: 10px;
+}
+.summary-card:hover {
+  border-color: #168653;
+  background: #f0faf5;
+}
+.summary-card strong {
+  color: #168653;
+  font-size: 22px;
+}
+.summary-card span {
+  color: #6c7e76;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .panel {
@@ -138,8 +206,10 @@ const handleDetailJump = (id) => {
 
 @media (max-width: 800px) {
   .mockup {
-    width: calc(100vw - 32px);
-    padding: 24px 18px 20px;
+    width: 100%;
+  }
+  .summary-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

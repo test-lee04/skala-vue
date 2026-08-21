@@ -1,10 +1,13 @@
 <script setup>
 import { computed, ref, watch, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 
 import BaseDashboardCard from './BaseDashboardCard.vue'
 import MatchStatusPanel from './MatchStatusPanel.vue'
 import SearchBar from './SearchBar.vue'
 import WeatherCard from './WeatherCard.vue'
+
+const router = useRouter()
 
 // 검색어
 const searchQuery = ref('')
@@ -71,8 +74,8 @@ const matchList = ref([
   },
 ])
 
-const showDetail = (cityName, status) => {
-  window.alert(`${cityName}의 현재 날씨는 [${status}] 상태입니다.`)
+const handleDetailJump = (cityId) => {
+  router.push({ name: 'WeatherDetail', params: { cityId } })
 }
 
 const filteredWeatherList = computed(() => {
@@ -85,9 +88,7 @@ const filteredWeatherList = computed(() => {
 
 // 선택된 도시 감시 (watch 이용)
 watch(selectedCityInfo, (newCity) => {
-  console.log(
-    `👁️ [watch 감지] 상태 바 문구가 업데이트되었습니다 → "${newCity}"`,
-  )
+  console.log(`👁️ [watch 감지] 상태 바 문구가 업데이트되었습니다 → "${newCity}"`)
 })
 
 // 검색어 변화 감시 (watchEffect 이용)
@@ -101,25 +102,38 @@ watchEffect(() => {
 <template>
   <div class="mockup">
     <BaseDashboardCard>
-        <SearchBar :current-query="searchQuery" @update-query="(val) => (searchQuery = val)"></SearchBar>
+      <SearchBar
+        :current-query="searchQuery"
+        @update-query="(val) => (searchQuery = val)"
+      ></SearchBar>
     </BaseDashboardCard>
 
     <BaseDashboardCard>
-        <h3>🏙️ 지역별 날씨 현황</h3>
+      <h3>🏙️ 지역별 날씨 현황</h3>
 
-        <WeatherCard v-for = "item in filteredWeatherList" :key="item.id" :city-item="item" @select-card="(msg) => (selectedCityInfo = msg)" @click-detail="showDetail" /> 
-        
-        <p v-if="filteredWeatherList.length === 0" style="text-align: center; color: #e74c3c; padding: 10px 0">검색 결과와 일치하는 도시가 없습니다.</p>
+      <WeatherCard
+        v-for="item in filteredWeatherList"
+        :key="item.id"
+        :city-item="item"
+        @select-card="(msg) => (selectedCityInfo = msg)"
+        @click-detail="handleDetailJump"
+      />
+
+      <p
+        v-if="filteredWeatherList.length === 0"
+        style="text-align: center; color: #e74c3c; padding: 10px 0"
+      >
+        검색 결과와 일치하는 도시가 없습니다.
+      </p>
     </BaseDashboardCard>
 
     <BaseDashboardCard>
       <MatchStatusPanel :matches="matchList" :weather-list="weatherList" />
     </BaseDashboardCard>
-        
+
     <p class="guide-message">
       {{ selectedCityInfo }}
     </p>
-
   </div>
 </template>
 

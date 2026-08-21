@@ -1,72 +1,39 @@
 <script setup>
+import { computed, ref } from 'vue'
 import MatchStatusPanel from '../components/Mockup/MatchStatusPanel.vue'
 import BaseDashboardCard from '../components/Mockup/BaseDashboardCard.vue'
+import { matchList, weatherList } from '../data/footballData'
 
-const weatherList = [
-  { id: 'city_01', name: '서울', temp: 28, status: '맑음' },
-  { id: 'city_02', name: '수원', temp: 24, status: '비' },
-  { id: 'city_03', name: '부산', temp: 26, status: '구름' },
-  { id: 'city_04', name: '맨체스터', temp: 10, status: '비' },
-  { id: 'city_05', name: '런던', temp: 21, status: '구름' },
-  { id: 'city_06', name: '바르셀로나', temp: 34, status: '맑음' },
-]
-
-const matchList = [
-  {
-    id: 'match_01',
-    cityId: 'city_01',
-    home: '서울FC',
-    away: '광주FC',
-    time: '19:30',
-    stadium: '서울월드컵경기장',
-  },
-  {
-    id: 'match_02',
-    cityId: 'city_02',
-    home: '수원FC',
-    away: '대전FC',
-    time: '18:00',
-    stadium: '수원종합운동장',
-  },
-  {
-    id: 'match_03',
-    cityId: 'city_03',
-    home: '부산아이파크',
-    away: '인천유나이티드',
-    time: '19:00',
-    stadium: '부산아시아드주경기장',
-  },
-  {
-    id: 'match_04',
-    cityId: 'city_04',
-    home: '맨체스터 시티',
-    away: '첼시',
-    time: '20:00',
-    stadium: '에티하드 스타디움',
-  },
-  {
-    id: 'match_05',
-    cityId: 'city_05',
-    home: '아스널',
-    away: '토트넘',
-    time: '20:30',
-    stadium: '에미레이츠 스타디움',
-  },
-  {
-    id: 'match_06',
-    cityId: 'city_06',
-    home: '바르셀로나',
-    away: '레알 마드리드',
-    time: '21:00',
-    stadium: '캄 노우',
-  },
-]
+const selectedLeague = ref('전체')
+const leagues = ['전체', ...new Set(matchList.map((match) => match.league))]
+const filteredMatches = computed(() =>
+  selectedLeague.value === '전체'
+    ? matchList
+    : matchList.filter((match) => match.league === selectedLeague.value),
+)
 </script>
 
 <template>
   <section class="today-match">
+    <header class="page-heading">
+      <span>MATCH DAY</span>
+      <h1>오늘의 주요 경기</h1>
+      <p>킥오프 시간과 경기장 날씨, 관람 주의사항을 확인하세요.</p>
+    </header>
+
+    <div class="league-filter" aria-label="리그 필터">
+      <button
+        v-for="league in leagues"
+        :key="league"
+        :class="{ active: selectedLeague === league }"
+        @click="selectedLeague = league"
+      >
+        {{ league }}
+      </button>
+    </div>
+
     <BaseDashboardCard>
-      <MatchStatusPanel :matches="matchList" :weather-list="weatherList" />
+      <MatchStatusPanel :matches="filteredMatches" :weather-list="weatherList" />
     </BaseDashboardCard>
   </section>
 </template>
@@ -74,7 +41,50 @@ const matchList = [
 <style scoped>
 .today-match {
   width: 100%;
-  max-width: 600px;
+  max-width: 960px;
   margin: 0 auto;
+}
+
+.page-heading {
+  margin-bottom: 24px;
+}
+
+.page-heading span {
+  color: #168653;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.page-heading h1 {
+  margin: 5px 0;
+  color: inherit;
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 800;
+}
+
+.page-heading p {
+  color: #6c7e76;
+}
+
+.league-filter {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+}
+.league-filter button {
+  padding: 8px 13px;
+  color: #60756c;
+  background: #fff;
+  border: 1px solid #dfe8e3;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.league-filter button.active {
+  color: #fff;
+  background: #168653;
+  border-color: #168653;
 }
 </style>

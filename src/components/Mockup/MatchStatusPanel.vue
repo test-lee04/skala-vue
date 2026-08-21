@@ -1,5 +1,8 @@
 <script setup>
 import { computed } from 'vue'
+import { useFavoriteMatchStore } from '../../stores/favoriteMatchStore'
+
+const favoriteStore = useFavoriteMatchStore()
 
 const props = defineProps({
   matches: {
@@ -45,7 +48,15 @@ const getNoticeType = (cityId) => {
   <h3>🏟️ 지역별 경기 현황</h3>
 
   <article v-for="match in matches" :key="match.id" class="stadium-card">
-    <h4>{{ match.home }} vs {{ match.away }}</h4>
+    <div class="card-heading">
+      <div>
+        <span>{{ match.league }}</span>
+        <h4>{{ match.home }} vs {{ match.away }}</h4>
+      </div>
+      <button class="favorite" @click="favoriteStore.toggleFavorite(match.id)">
+        {{ favoriteStore.isFavorite(match.id) ? '★' : '☆' }}
+      </button>
+    </div>
     <p><strong>시간:</strong> {{ match.time }}</p>
     <p><strong>경기장:</strong> {{ match.stadium }}</p>
     <p v-if="getWeather(match.cityId)">
@@ -56,6 +67,7 @@ const getNoticeType = (cityId) => {
     <p class="notice" :class="getNoticeType(match.cityId)">
       <strong>주의사항:</strong> {{ getNotice(match.cityId) }}
     </p>
+    <RouterLink class="detail-link" :to="`/matches/${match.id}`">경기 상세 보기 →</RouterLink>
   </article>
 </template>
 
@@ -80,6 +92,31 @@ h3 {
   font-size: 13px;
   font-weight: 800;
   border-bottom: 1px solid #edf0f2;
+}
+.card-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card-heading span {
+  color: #168653;
+  font-size: 10px;
+  font-weight: 800;
+}
+.favorite {
+  align-self: start;
+  color: #e6a900;
+  font-size: 22px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.detail-link {
+  display: inline-block;
+  margin-top: 9px;
+  color: #168653;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .stadium-card p {
